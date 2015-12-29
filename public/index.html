@@ -3,16 +3,60 @@
   <head>
 	<title>Raspi IoT</title>
 
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="materialize.min.css">
 	
 	<script src="socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="jquery.js"></script>
+	<script type="text/javascript" src="materialize.min.js"></script>
 	<!-- // <script type="text/javascript" src="app/script.js"></script> -->
 
   </head>
   <body>
+
+  <div class="row">
+      <div class="col s12">
+      	<div class=" amber lighten-1 card-panel">
+	      	<h4>Raspi IoT</h1>
+      	</div>
+      </div>
+
+
+	<div class="row">
+		<div class="col s6 offset-s3">
+			<iframe src ="http://192.168.0.140:8081" width="640" height="480">	
+		</div>
+	</div>
+
+
+      <div class="row">
+	      <div class="col s4 offset-s4">
+		      <a class="waves-effect waves-light grey darken-3 btn-large">Up</a>
+		      <a class="waves-effect waves-light grey darken-3 btn-large">Down</a>
+		      <a class="waves-effect waves-light grey darken-3 btn-large">Left</a>
+		      <a class="waves-effect waves-light grey darken-3 btn-large">Right</a>
+		  </div>
+      </div>
+
+      <div class="row">
+	      <div class="col s4 offset-s4">
+		      <a class="waves-effect waves-light grey darken-3 btn-large">A</a>
+		      <a class="waves-effect waves-light grey darken-3 btn-large">B</a>
+		      <a class="waves-effect waves-light grey darken-3 btn-large">C</a>
+		      <a class="waves-effect waves-light grey darken-3 btn-large">D</a>
+		  </div>
+      </div> 
+
+      <div class="row">
+	      <div class="col s4 offset-s4">
+		      <a class="waves-effect waves-light red darken-3 btn-large">A</a>
+		      <a class="waves-effect waves-light yellow darken-3 btn-large">B</a>
+		      <a class="waves-effect waves-light green darken-3 btn-large">C</a>
+		      <a class="waves-effect waves-light blue darken-3 btn-large">D</a>
+		  </div>
+      </div>
+
+  </div>
 	
-	<!-- <iframe src ="http://192.168.0.140:8081" width="640" height="480">	 -->
 
 	<!-- <input type="range" id= "inputSlider" min="0" max="255" value="50" step="1" oninput="showValue(this.value)" /> -->
 	<!-- <br><br><span id="outputText">50</span> -->
