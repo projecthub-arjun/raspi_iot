@@ -12,6 +12,12 @@ console.log ('Live at ' + port);
 
 app.use(express.static('public'));		
 
+/* Initialize action buttons */
+status_a = false;
+status_b = false;
+status_c = false;
+status_d = false;
+
 io.sockets.on('connection', function (socket) {
 	/*socket.on('led', function (data) {
 		brightness = data.value;
@@ -35,8 +41,29 @@ io.sockets.on('connection', function (socket) {
 		
 	});
 
+	socket.on('action', function (data) {
+
+		/* data is ascii for {u, d, l, r} */
+
+		switch (data.button){
+			case 'a' : status_a = !status_a; break;
+			case 'b' : status_b = !status_b; break;
+			case 'c' : status_c = !status_c; break;
+			case 'd' : status_d = !status_d; break;
+		}
+		console.log ("\nAction set is now")
+		console.log (status_a, status_b, status_c, status_d);
+		
+
+		// var buf = new Buffer(1);
+		// buf.writeUInt8(data.value, 0);
+		// serialPort.write(buf);
+		
+		io.sockets.emit('action', { 'a': status_a, 'b': status_b, 'c': status_c, 'd': status_d });
+	});
+
 	
-	// socket.emit('led', {value: brightness});
+	socket.emit('action', { 'a': status_a, 'b': status_b, 'c': status_c, 'd': status_d });
 });
 
 // serialPort.open(function (error) {

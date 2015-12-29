@@ -25,18 +25,27 @@
 			console.log ('Moving ' + key)
 			socket.emit('move', { value: key });
 		}
+
+		function emitToggle(key)
+		{
+			console.log ('Toggling ' + key)
+			socket.emit('action', { button: key });
+		}
 		
-		/*socket.on('led', function (data) {
-			document.getElementById("inputSlider").value = data.value;
-			document.getElementById("outputText").innerHTML = data.value;
+		socket.on('action', function (data) {
+			status_a = data.a; status_b = data.b;
+			status_c = data.c; status_d = data.d;
+
+			console.log (status_a, status_b, status_c, status_d);
 		});
-		*/
+		
 
 		$(document).keydown(function(e) {
     
 		    switch(e.keyCode){
 		    
 		    	/* Motion keys */
+		    	/* { up: 38; down: 40; left: 37; right: 39}*/
 		    	
 		    	case 37 : emitMove('l'); break;
 		    	case 38 : emitMove('u'); break;
@@ -44,6 +53,13 @@
 		    	case 40 : emitMove('d'); break;
 
 		    	/* Action keys */
+		    	/* { A: 65; S: 83; D: 68; F: 70 }*/
+		    	/* Works both with CAPS on and off */
+
+		    	case 65: emitToggle('a'); break;
+		    	case 83: emitToggle('b'); break;
+		    	case 68: emitToggle('c'); break;
+		    	case 70: emitToggle('d'); break;
 
 		    };
 		});
