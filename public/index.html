@@ -14,10 +14,16 @@
 
 	<div class="row">
 		<div class="col s6 offset-s3">
-			<iframe src ="http://192.168.0.140:8081" width="640" height="480">	
+			<!-- <iframe src ="http://192.168.0.140:8081" width="640" height="480">	 -->
 		</div>
 	</div>
 
+
+<div class="row center">
+	<div class="col s12">
+		<p class="pink-text">Heart rate: <span id="heart_rate">Unavailable</span> </p>
+	</div>
+</div>
 
 
 	 <div class="row center">
@@ -75,6 +81,11 @@
 				else { button_d.removeClass('darken-2').addClass('lighten-3') }
 
 			console.log (data);
+		});
+
+		socket.on('hear_rate', function (data) {
+			console.log ("Heart rate: " + data.value);
+			$('#heart_rate').text(data.value);
 		});
 		
 	
