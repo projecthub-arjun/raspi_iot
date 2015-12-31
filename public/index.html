@@ -8,18 +8,9 @@
 	<script src="socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="materialize.min.js"></script>
-	<!-- // <script type="text/javascript" src="app/script.js"></script> -->
 
   </head>
   <body>
-
-  <div class="row">
-      <div class="col s12">
-      	<div class=" amber lighten-1 card-panel">
-	      	<h4>Raspi IoT</h1>
-      	</div>
-      </div>
-
 
 	<div class="row">
 		<div class="col s6 offset-s3">
@@ -28,41 +19,38 @@
 	</div>
 
 
-      <div class="row">
+
+	 <div class="row center">
 	      <div class="col s4 offset-s4">
-		      <a class="waves-effect waves-light grey darken-3 btn-large">Up</a>
-		      <a class="waves-effect waves-light grey darken-3 btn-large">Down</a>
-		      <a class="waves-effect waves-light grey darken-3 btn-large">Left</a>
-		      <a class="waves-effect waves-light grey darken-3 btn-large">Right</a>
+		      <a data-action="a" class="js-action waves-effect waves-light lighten-4 btn-large red">A</a>
+		      <a data-action="b" class="js-action waves-effect waves-light lighten-4 btn-large yellow">B</a>
+		      <a data-action="c" class="js-action waves-effect waves-light lighten-4 btn-large green">C</a>
+		      <a data-action="d" class="js-action waves-effect waves-light lighten-4 btn-large blue">D</a>
 		  </div>
       </div>
 
-      <div class="row">
-	      <div class="col s4 offset-s4">
-		      <a class="waves-effect waves-light grey darken-3 btn-large">A</a>
-		      <a class="waves-effect waves-light grey darken-3 btn-large">B</a>
-		      <a class="waves-effect waves-light grey darken-3 btn-large">C</a>
-		      <a class="waves-effect waves-light grey darken-3 btn-large">D</a>
-		  </div>
-      </div> 
 
-      <div class="row">
-	      <div class="col s4 offset-s4">
-		      <a class="waves-effect waves-light red darken-3 btn-large">A</a>
-		      <a class="waves-effect waves-light yellow darken-3 btn-large">B</a>
-		      <a class="waves-effect waves-light green darken-3 btn-large">C</a>
-		      <a class="waves-effect waves-light blue darken-3 btn-large">D</a>
+      <div class="row center">
+	      <div class="col s12">
+		      <a href="#" data-motion="u" class="js-motion waves-effect waves-light grey darken-3 btn-large s6">Up</a>
+		      <a href="#" data-motion="d" class="js-motion waves-effect waves-light grey darken-3 btn-large s6">Down</	a>
+		      <a href="#" data-motion="l" class="js-motion waves-effect waves-light grey darken-3 btn-large">Left</a>
+		      <a href="#" data-motion="r" class="js-motion waves-effect waves-light grey darken-3 btn-large">Right</a>
 		  </div>
       </div>
 
   </div>
 	
+	<div class="row center">
+		<p> You can also Arrow keys and A S D F to control. </p>
+	</div>
 
-	<!-- <input type="range" id= "inputSlider" min="0" max="255" value="50" step="1" oninput="showValue(this.value)" /> -->
-	<!-- <br><br><span id="outputText">50</span> -->
-	
-	<script type="text/javascript">
+	<script type="text/javascript"> 	
 		var socket = io.connect();
+		button_a = $('a[data-action="a"]');
+		button_b = $('a[data-action="b"]');
+		button_c = $('a[data-action="c"]');
+		button_d = $('a[data-action="d"]');
 
 		function emitMove(key)
 		{
@@ -77,11 +65,28 @@
 		}
 		
 		socket.on('action', function (data) {
-			status_a = data.a; status_b = data.b;
-			status_c = data.c; status_d = data.d;
+			if(data.a){ button_a.addClass('darken-2').removeClass('lighten-3)') } 
+				else { button_a.removeClass('darken-2').addClass('lighten-3') }
+			if(data.b){ button_b.addClass('darken-2').removeClass('lighten-3)') } 
+				else { button_b.removeClass('darken-2').addClass('lighten-3') }
+			if(data.c){ button_c.addClass('darken-2').removeClass('lighten-3)') } 
+				else { button_c.removeClass('darken-2').addClass('lighten-3') }
+			if(data.d){ button_d.addClass('darken-2').removeClass('lighten-3)') } 
+				else { button_d.removeClass('darken-2').addClass('lighten-3') }
 
-			console.log (status_a, status_b, status_c, status_d);
+			console.log (data);
 		});
+		
+	
+		$('.js-motion').click(function(){
+			emitMove($(this).data('motion'))
+		})
+
+		$('.js-action').click(function(){
+			emitToggle($(this).data('action'))
+		})
+		
+
 		
 
 		$(document).keydown(function(e) {
