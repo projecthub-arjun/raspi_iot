@@ -14,7 +14,7 @@
 
 	<div class="row">
 		<div class="col s6 offset-s3">
-			<!-- <iframe src ="http://192.168.0.140:8081" width="640" height="480">	 -->
+			<!--<iframe src ="http://192.168.0.140:8081" width="640" height="480">-->
 		</div>
 	</div>
 
@@ -57,6 +57,7 @@
 		button_b = $('a[data-action="b"]');
 		button_c = $('a[data-action="c"]');
 		button_d = $('a[data-action="d"]');
+		isPressed = false;
 
 		function emitMove(key)
 		{
@@ -83,13 +84,13 @@
 			console.log (data);
 		});
 
-		socket.on('hear_rate', function (data) {
+		socket.on('heart_rate', function (data) {
 			console.log ("Heart rate: " + data.value);
 			$('#heart_rate').text(data.value);
 		});
 		
 	
-		$('.js-motion').click(function(){
+		$('.js-motion').onmousedown(function(){
 			emitMove($(this).data('motion'))
 		})
 
@@ -97,32 +98,50 @@
 			emitToggle($(this).data('action'))
 		})
 		
+	   //Listen for key presses
+	   $(document).keydown(function(e){
+			//Don't do anything if there's already a key pressed
+			if(!isPressed)
+			{
+				isPressed = true;
+				switch(e.keyCode){
+					/* Motion keys */
+					/* { up: 38; down: 40; left: 37; right: 39}*/
+					
+					case 37 : emitMove('l'); break;
+					case 38 : emitMove('u'); break;
+					case 39 : emitMove('r'); break;
+					case 40 : emitMove('d'); break;
+				}
+			}
+			
+			switch(e.keyCode)
+			{
+				/* Action keys */
+				/* { A: 65; S: 83; D: 68; F: 70 }*/
+				/* Works both with CAPS on and off */
 
-		
-
-		$(document).keydown(function(e) {
-    
-		    switch(e.keyCode){
-		    
-		    	/* Motion keys */
-		    	/* { up: 38; down: 40; left: 37; right: 39}*/
-		    	
-		    	case 37 : emitMove('l'); break;
-		    	case 38 : emitMove('u'); break;
-		    	case 39 : emitMove('r'); break;
-		    	case 40 : emitMove('d'); break;
-
-		    	/* Action keys */
-		    	/* { A: 65; S: 83; D: 68; F: 70 }*/
-		    	/* Works both with CAPS on and off */
-
-		    	case 65: emitToggle('a'); break;
-		    	case 83: emitToggle('b'); break;
-		    	case 68: emitToggle('c'); break;
-		    	case 70: emitToggle('d'); break;
-
-		    };
+				case 65: emitToggle('a'); break;
+				case 83: emitToggle('b'); break;
+				case 68: emitToggle('c'); break;
+				case 70: emitToggle('d'); break;
+			}
 		});
+			
+		 //Stop all motors when Move keys are released
+		  $(document).keyup(function(e){
+			if(isPressed)
+		    {
+				switch(e.keyCode){
+					case 37:
+					case 38:
+					case 39:
+					case 40:
+					emitMove('s');
+					isPressed = false;
+				}
+			}
+		  });
 	</script>
   </body>
 </html>

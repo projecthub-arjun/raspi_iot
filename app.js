@@ -4,15 +4,15 @@ server = require('http').createServer(app);
 io = require('socket.io').listen(server);
 
 var SerialPort = require("serialport").SerialPort
-var serialPort = new SerialPort("/dev/ttyACM0", { baudrate: 115200 });
+var serialPort = new SerialPort("/dev/ttyACM0", { baudrate: 9600 });
 
-port = 8080;
+port = 3000;
 server.listen(port);
 console.log ('Live at port ' + port);
 
 app.use(express.static('public'));		
 
-/* Initialize Actions to false */
+// Initialize Actions to false
 status_a = false;
 status_b = false;
 status_c = false;
@@ -26,8 +26,7 @@ io.sockets.on('connection', function (socket) {
 
 	socket.on('action', function (data) {
 
-		/* Data is ascii for {u, d, l, r} */
-
+		// Data is ascii for {u, d, l, r}
 		switch (data.button){
 			case 'a' : status_a = !status_a; break;
 			case 'b' : status_b = !status_b; break;
@@ -38,14 +37,14 @@ io.sockets.on('connection', function (socket) {
 		console.log ("\nAction set is now")
 		console.log (status_a, status_b, status_c, status_d);
 
-		/* Send the toggled button to Arduino */
+		// Send the toggled button to Arduino
 		send_via_serial(data.button)
 
-		/* Now emit to all connected devices so they synchronise */
+		// Now emit to all connected devices so they synchronise
 		io.sockets.emit('action', { 'a': status_a, 'b': status_b, 'c': status_c, 'd': status_d });
 	});
 
-	/* Emit status when new devices are connected */	
+	// Emit status when new devices are connected
 	socket.emit('action', { 'a': status_a, 'b': status_b, 'c': status_c, 'd': status_d });
 });
 
@@ -55,21 +54,35 @@ serialPort.open(function (error) {
   } else {
 
 
-	 /* Send signal to reset the Arduino.
-		(Don't forget to write the handler for this:
-		Set all Action buttons to 0 if you capture 
-		this on the Arduino.) */
+	    // Send signal to reset the Arduino.
+		// TODO: (Don't forget to write the handler for this:
+		// Set all Action buttons to 0 if you capture 
+		// this on the Arduino.).
 		
 		send_via_serial('x');
 
 
-	 /* Always listen actively for data. 
-		If heart_rate, broadcast its value. */
+	    // Always listen actively for data. 
+		// If heart_rate, broadcast its value.
 		
-		serialPort.on('data', function(data) {
-		console.log('Data received: ' + data);
-
-		if(data[0] == 'b') { socket.emit ('heart_rate', {value: data[1]})}
+		var bpm_value = ''; // this stores the clean data
+		var readData = '';  // this stores the buffer
+		
+		 // Call back when data is received
+		serialPort.on('data', function (data) {
+		
+		// Append data to buffer
+		readData += data.toString(); 
+		
+		// If the Letters '*' and '#' are found on the buffer 
+		// then isolate what's in the middle, which is the BPM
+		// Then clear the read buffer.
+		if (readData.indexOf('*') >= 0 && readData.indexOf('#') >= 0) {
+			bpm_value = readData.substring(readData.indexOf('*') + 1, readData.indexOf('#'));
+			readData = '';
+			console.log('BPM: ' + bpm_value );
+			io.sockets.emit('heart_rate', {'value': bpm_value});
+		}
     });
   }
 });
