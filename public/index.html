@@ -4,21 +4,32 @@
 	<title>Raspi IoT</title>
 
 	<link rel="stylesheet" href="materialize.min.css">
+	<style>
+		.camera {
+		    width: 640px;
+			height: 480px;
+		    transform: rotate(180deg);
+		    -webkit-transform: rotate(180deg);
+		    -ms-transform: rotate(180deg);
+			margin: 25px auto auto auto;
+		}
+	</style>
 	
 	<script src="socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="materialize.min.js"></script>
-
   </head>
   <body>
-
-	<div class="row">
-		<div class="col s6 offset-s3">
-			<iframe src ="http://192.168.0.140:8081" width="640" height="480"></iframe>
+  
+<div class="row center">
+	<div class="camera_feed col s12">
+		<div class = camera>
+			<iframe width="100%" height="100%" src="http://192.168.0.140:8081" scrolling="no"  frameborder="0"></iframe>
 		</div>
 	</div>
+</div>
 
-
+	
 <div class="row center">
 	<div class="col s12">
 		<p class="pink-text">Heart rate: <span id="heart_rate">Unavailable</span> </p>
@@ -38,8 +49,8 @@
 
       <div class="row center">
 	      <div class="col s12">
-		      <a href="#" data-motion="u" class="js-motion waves-effect waves-light grey darken-3 btn-large s6">Up</a>
-		      <a href="#" data-motion="d" class="js-motion waves-effect waves-light grey darken-3 btn-large s6">Down</	a>
+		      <a href="#" data-motion="u" class="js-motion waves-effect waves-light grey darken-3 btn-large s6">Front</a>
+		      <a href="#" data-motion="d" class="js-motion waves-effect waves-light grey darken-3 btn-large s6">Back</a>
 		      <a href="#" data-motion="l" class="js-motion waves-effect waves-light grey darken-3 btn-large">Left</a>
 		      <a href="#" data-motion="r" class="js-motion waves-effect waves-light grey darken-3 btn-large">Right</a>
 		  </div>
@@ -61,24 +72,24 @@
 
 		function emitMove(key)
 		{
-			console.log ('Moving ' + key)
+			console.log (key)
 			socket.emit('move', { value: key });
 		}
 
 		function emitToggle(key)
 		{
-			console.log ('Toggling ' + key)
+			console.log (key)
 			socket.emit('action', { button: key });
 		}
 		
 		socket.on('action', function (data) {
-			if(data.a){ button_a.addClass('darken-2').removeClass('lighten-3)') } 
+			if(data.a){ button_a.addClass('darken-2').removeClass('lighten-3') } 
 				else { button_a.removeClass('darken-2').addClass('lighten-3') }
-			if(data.b){ button_b.addClass('darken-2').removeClass('lighten-3)') } 
+			if(data.b){ button_b.addClass('darken-2').removeClass('lighten-3') } 
 				else { button_b.removeClass('darken-2').addClass('lighten-3') }
-			if(data.c){ button_c.addClass('darken-2').removeClass('lighten-3)') } 
+			if(data.c){ button_c.addClass('darken-2').removeClass('lighten-3') } 
 				else { button_c.removeClass('darken-2').addClass('lighten-3') }
-			if(data.d){ button_d.addClass('darken-2').removeClass('lighten-3)') } 
+			if(data.d){ button_d.addClass('darken-2').removeClass('lighten-3') } 
 				else { button_d.removeClass('darken-2').addClass('lighten-3') }
 
 			console.log (data);
@@ -90,12 +101,14 @@
 		});
 		
 	
-		$('.js-motion').click(function(){
-			emitMove($(this).data('motion'))
-		})
+		$('.js-motion').mousedown(function(){
+			emitMove($(this).data('motion'));
+		}).mouseup(function(){
+			emitMove('s');
+		});
 
 		$('.js-action').click(function(){
-			emitToggle($(this).data('action'))
+			emitToggle($(this).data('action'));
 		})
 		
 	   //Listen for key presses
@@ -120,7 +133,6 @@
 				/* Action keys */
 				/* { A: 65; S: 83; D: 68; F: 70 }*/
 				/* Works both with CAPS on and off */
-
 				case 65: emitToggle('a'); break;
 				case 83: emitToggle('b'); break;
 				case 68: emitToggle('c'); break;
