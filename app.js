@@ -5,6 +5,7 @@ io = require('socket.io').listen(server);
 
 var SerialPort = require("serialport").SerialPort
 var serialPort = new SerialPort("/dev/ttyACM0", { baudrate: 9600 });
+var weighted_bpm = 0;
 
 port = 3000;
 server.listen(port);
@@ -80,8 +81,14 @@ serialPort.open(function (error) {
 		if (readData.indexOf('*') >= 0 && readData.indexOf('#') >= 0) {
 			bpm_value = readData.substring(readData.indexOf('*') + 1, readData.indexOf('#'));
 			readData = '';
-			console.log('BPM: ' + bpm_value );
-			io.sockets.emit('heart_rate', {'value': bpm_value});
+			bpm_value = parseInt(bpm_value,10);
+			if(bpm_value >= 60 && bpm_value <= 100)
+			{
+				weighted_bpm = bpm_value;
+			}
+			weighted_bpm = parseInt(weighted_bpm,10);
+			console.log('BPM: ' + weighted_bpm );
+			io.sockets.emit('heart_rate', {'value': weighted_bpm});
 		}
     });
   }
@@ -89,7 +96,5 @@ serialPort.open(function (error) {
 
 
 function send_via_serial (control) {
-	var buf = new Buffer(1);
-	buf.writeUInt8(control, 0);
-	serialPort.write(buf);
+	serialPort.write(control);
 }
